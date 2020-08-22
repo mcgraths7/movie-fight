@@ -10,6 +10,7 @@ const generateAutocompleteWidget = (id) => {
         <div class='dropdown-content results'></div>
       </div>
     </div>
+    <div class="movie-details"></div>
   `;
 };
 
@@ -18,6 +19,7 @@ const root = document.querySelector('.autocomplete');
 const dropdown = document.querySelector('.dropdown');
 const movieInput = document.querySelector('input');
 const resultsWrapper = document.querySelector('.results');
+const detailsWrapper = document.querySelector('.movie-details');
 
 const createMovieListItem = (movie, resultsWrapper) => {
   const movieItem = document.createElement('a');
@@ -31,38 +33,19 @@ const createMovieListItem = (movie, resultsWrapper) => {
 
   movieItem.addEventListener('click', async () => {
     const movieDetails = await onMovieSelected(movie);
-    console.log(movieDetails);
-    // TODO: createMovieDetails(movieDetails);
+    createMovieDetail(movieDetails);
   });
 
   resultsWrapper.appendChild(movieItem);
 };
 
-const onMovieSelected = async (selectedMovie) => {
-  movieInput.value = selectedMovie.Title;
-  dropdown.classList.remove('is-active');
-  const movieDetails = await fetchSingleMovie(selectedMovie.Title);
-  return movieDetails;
-};
-
-const onInput = debounce(async (e) => {
-  const movies = await fetchSeveralMovies(e.target.value);
-  if (!movies.length) {
-    dropdown.classList.remove('is-active');
-    return;
-  }
-  resultsWrapper.innerHTML = ``;
-  for (let movie of movies) {
-    createMovieListItem(movie, resultsWrapper);
-  }
-  dropdown.classList.add('is-active');
-});
-
-const onFocus = () => {
-  const dropdownContent = document.querySelector('.dropdown-content');
-  if (dropdownContent.childElementCount > 0) {
-    dropdown.classList.add('is-active');
-  }
+const createMovieDetail = (details) => {
+  detailsWrapper.innerHTML = `
+    <p>${details.Title} (${details.Year})</p>
+    <p>Director: ${details.Director}</p>
+    <p>Box Office: ${details.BoxOffice}</p>
+    <p>IMDb Rating: ${details.imdbRating}</p>
+  `;
 };
 
 document.addEventListener('click', (event) => {
