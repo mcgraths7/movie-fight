@@ -23,15 +23,34 @@ const createMovieListItem = (movie, resultsWrapper) => {
   const movieItem = document.createElement('a');
   movieItem.classList.add('dropdown-item');
   const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
+
   movieItem.innerHTML = `
     <img src="${imgSrc}" />
     ${movie.Title} (${movie.Year})
   `;
+
+  movieItem.addEventListener('click', async () => {
+    const movieDetails = await onMovieSelected(movie);
+    console.log(movieDetails);
+    // TODO: createMovieDetails(movieDetails);
+  });
+
   resultsWrapper.appendChild(movieItem);
+};
+
+const onMovieSelected = async (selectedMovie) => {
+  movieInput.value = selectedMovie.Title;
+  dropdown.classList.remove('is-active');
+  const movieDetails = await fetchSingleMovie(selectedMovie.Title);
+  return movieDetails;
 };
 
 const onInput = debounce(async (e) => {
   const movies = await fetchSeveralMovies(e.target.value);
+  if (!movies.length) {
+    dropdown.classList.remove('is-active');
+    return;
+  }
   resultsWrapper.innerHTML = ``;
   for (let movie of movies) {
     createMovieListItem(movie, resultsWrapper);
