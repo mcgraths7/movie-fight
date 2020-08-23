@@ -41,11 +41,43 @@ const createMovieListItem = (movie, resultsWrapper) => {
 
 const createMovieDetail = (details) => {
   detailsWrapper.innerHTML = `
-    <p>${details.Title} (${details.Year})</p>
-    <p>Director: ${details.Director}</p>
-    <p>Box Office: ${details.BoxOffice}</p>
-    <p>IMDb Rating: ${details.imdbRating}</p>
+    <article class="media">
+      <figure class="media-left">
+        <p class="image">
+          <img src="${details.Poster}" />
+          </p>
+        </figure>
+        <div class="media-content">
+          <div class="content">
+            <h2>${details.Title} (${details.Year})</h2>
+            <h4>${details.Genre}</h4>
+            <p>${details.Plot}</p>
+          </div>
+        </div>
+    </article>
+    <article class="notification is-primary>
+      <p class="title">${details.Awards}</p>
+      <p class="subtitle">Awards</p>
+    </article>
+    <article class="notification is-primary>
+      <p class="title">${details.BoxOffice}</p>
+      <p class="subtitle">Box Office</p>
+    </article>
+    <article class="notification is-primary>
+      <p class="title">${details.Metascore}</p>
+      <p class="subtitle">Metascore</p>
+    </article>
+    <article class="notification is-primary>
+      <p class="title">${details.imdbRating}</p>
+      <p class="subtitle">IMDb Rating</p>
+    </article>
+    <article class="notification is-primary>
+      <p class="title">${details.imdbVotes}</p>
+      <p class="subtitle">IMDb Votes</p>
+    </article>
+
   `;
+  console.log(details);
 };
 
 document.addEventListener('click', (event) => {

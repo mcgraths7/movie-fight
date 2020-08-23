@@ -16,7 +16,7 @@ const fetchSingleMovie = async (queryString) => {
   const resp = await axios.get('http://www.omdbapi.com/', {
     params: {
       apikey: '219263fc',
-      t: queryString,
+      i: queryString,
     },
   });
   if (resp.data.Error) {

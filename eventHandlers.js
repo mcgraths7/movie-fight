@@ -11,7 +11,7 @@ const debounce = (callback, delay = 350) => {
 const onMovieSelected = async (selectedMovie) => {
   movieInput.value = selectedMovie.Title;
   dropdown.classList.remove('is-active');
-  const movieDetails = await fetchSingleMovie(selectedMovie.Title);
+  const movieDetails = await fetchSingleMovie(selectedMovie.imdbID);
   return movieDetails;
 };
 
