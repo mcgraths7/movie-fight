@@ -1,89 +1,80 @@
-const generateAutocompleteWidget = (id) => {
-  const autocompleteDiv = document.getElementById(id);
-  autocompleteDiv.innerHTML = `
-    <label>
-      <strong>Search for a Movie</strong>
-      <input class='input' />
-    </label>
-    <div class="dropdown">
-      <div class='dropdown-menu'>
-        <div class='dropdown-content results'></div>
-      </div>
-    </div>
-    <div class="movie-details"></div>
-  `;
-};
+createAutoComplete({
+  root: document.querySelector('.autocomplete'),
+  renderOption(movie) {
+    const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
+    return `
+      <img src="${imgSrc}" />
+      ${movie.Title} (${movie.Year})
+    `;
+  },
+  onOptionSelect(movie) {
+    onMovieSelect(movie);
+  },
+  inputValue(movie) {
+    return movie.Title;
+  },
+  async fetchData(searchTerm) {
+    const response = await axios.get('http://www.omdbapi.com/', {
+      params: {
+        apikey: '219263fc',
+        s: searchTerm,
+      },
+    });
 
-generateAutocompleteWidget('firstAutocomplete');
-const root = document.querySelector('.autocomplete');
-const dropdown = document.querySelector('.dropdown');
-const movieInput = document.querySelector('input');
-const resultsWrapper = document.querySelector('.results');
-const detailsWrapper = document.querySelector('.movie-details');
+    if (response.data.Error) {
+      return [];
+    }
 
-const createMovieListItem = (movie, resultsWrapper) => {
-  const movieItem = document.createElement('a');
-  movieItem.classList.add('dropdown-item');
-  const imgSrc = movie.Poster === 'N/A' ? '' : movie.Poster;
+    return response.data.Search;
+  },
+});
 
-  movieItem.innerHTML = `
-    <img src="${imgSrc}" />
-    ${movie.Title} (${movie.Year})
-  `;
-
-  movieItem.addEventListener('click', async () => {
-    const movieDetails = await onMovieSelected(movie);
-    createMovieDetail(movieDetails);
+const onMovieSelect = async (movie) => {
+  const response = await axios.get('http://www.omdbapi.com/', {
+    params: {
+      apikey: '219263fc',
+      i: movie.imdbID,
+    },
   });
 
-  resultsWrapper.appendChild(movieItem);
+  document.querySelector('#summary').innerHTML = movieTemplate(response.data);
 };
 
-const createMovieDetail = (details) => {
-  detailsWrapper.innerHTML = `
+const movieTemplate = (movieDetail) => {
+  return `
     <article class="media">
       <figure class="media-left">
         <p class="image">
-          <img src="${details.Poster}" />
-          </p>
-        </figure>
-        <div class="media-content">
-          <div class="content">
-            <h2>${details.Title} (${details.Year})</h2>
-            <h4>${details.Genre}</h4>
-            <p>${details.Plot}</p>
-          </div>
+          <img src="${movieDetail.Poster}" />
+        </p>
+      </figure>
+      <div class="media-content">
+        <div class="content">
+          <h1>${movieDetail.Title}</h1>
+          <h4>${movieDetail.Genre}</h4>
+          <p>${movieDetail.Plot}</p>
         </div>
+      </div>
     </article>
-    <article class="notification is-primary>
-      <p class="title">${details.Awards}</p>
+    <article class="notification is-primary">
+      <p class="title">${movieDetail.Awards}</p>
       <p class="subtitle">Awards</p>
     </article>
-    <article class="notification is-primary>
-      <p class="title">${details.BoxOffice}</p>
+    <article class="notification is-primary">
+      <p class="title">${movieDetail.BoxOffice}</p>
       <p class="subtitle">Box Office</p>
     </article>
-    <article class="notification is-primary>
-      <p class="title">${details.Metascore}</p>
+    <article class="notification is-primary">
+      <p class="title">${movieDetail.Metascore}</p>
       <p class="subtitle">Metascore</p>
     </article>
-    <article class="notification is-primary>
-      <p class="title">${details.imdbRating}</p>
-      <p class="subtitle">IMDb Rating</p>
+    <article class="notification is-primary">
+      <p class="title">${movieDetail.imdbRating}</p>
+      <p class="subtitle">IMDB Rating</p>
     </article>
-    <article class="notification is-primary>
-      <p class="title">${details.imdbVotes}</p>
-      <p class="subtitle">IMDb Votes</p>
+    <article class="notification is-primary">
+      <p class="title">${movieDetail.imdbVotes}</p>
+      <p class="subtitle">IMDB Votes</p>
     </article>
-
   `;
-  console.log(details);
 };
-
-document.addEventListener('click', (event) => {
-  if (!root.contains(event.target)) {
-    dropdown.classList.remove('is-active');
-  }
-});
-movieInput.addEventListener('input', onInput);
-movieInput.addEventListener('focus', onFocus);
