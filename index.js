@@ -27,6 +27,7 @@ createAutoComplete({
 
     return response.data.Search;
   },
+  typeOfData: 'Movie',
 });
 
 const onMovieSelect = async (movie) => {

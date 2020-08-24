@@ -1,7 +1,16 @@
-const createAutoComplete = ({ root, renderOption, onOptionSelect, inputValue, fetchData }) => {
+const createAutoComplete = ({
+  root,
+  renderOption,
+  onOptionSelect,
+  inputValue,
+  fetchData,
+  typeOfData,
+}) => {
   root.innerHTML = `
-    <label><b>Search</b></label>
-    <input class="input" />
+    <label>
+      <b>Search for a ${typeOfData}</b>
+      <input class="input" />
+    </label>
     <div class="dropdown">
       <div class="dropdown-menu">
         <div class="dropdown-content results"></div>
@@ -9,7 +18,7 @@ const createAutoComplete = ({ root, renderOption, onOptionSelect, inputValue, fe
     </div>
   `;
 
-  const input = root.querySelector('input');
+  const input = root.querySelector('.input');
   const dropdown = root.querySelector('.dropdown');
   const resultsWrapper = root.querySelector('.results');
 
@@ -38,6 +47,9 @@ const createAutoComplete = ({ root, renderOption, onOptionSelect, inputValue, fe
     }
   };
   input.addEventListener('input', debounce(onInput, 500));
+  input.addEventListener('click', () => {
+    dropdown.classList.add('is-active');
+  });
 
   document.addEventListener('click', (event) => {
     if (!root.contains(event.target)) {

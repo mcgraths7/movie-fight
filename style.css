@@ -31,10 +31,6 @@ figure .image img {
   justify-content: space-around;
 }
 
-.dropdown {
-  display: block;
-}
-
 .dropdown-item {
   display: flex;
   align-items: center;
