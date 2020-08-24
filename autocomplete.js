@@ -24,13 +24,13 @@ const createAutoComplete = ({
 
   const onInput = async (event) => {
     const items = await fetchData(event.target.value);
+    resultsWrapper.innerHTML = '';
 
     if (!items.length) {
       dropdown.classList.remove('is-active');
       return;
     }
 
-    resultsWrapper.innerHTML = '';
     dropdown.classList.add('is-active');
     for (let item of items) {
       const option = document.createElement('a');
@@ -47,8 +47,10 @@ const createAutoComplete = ({
     }
   };
   input.addEventListener('input', debounce(onInput, 500));
-  input.addEventListener('click', () => {
-    dropdown.classList.add('is-active');
+  input.addEventListener('focus', () => {
+    if (!resultsWrapper.childElementCount === 0) {
+      dropdown.classList.add('is-active');
+    }
   });
 
   document.addEventListener('click', (event) => {
